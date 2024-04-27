@@ -1,56 +1,78 @@
 "use client"
-import React from 'react'
 import axios from 'axios';
-import { useEffect, useState,useRef } from 'react';
-import { Grid, Card, CardMedia, CardContent, Typography, CardActionArea } from '@mui/material';
-import { styled } from '@mui/material/styles';
+import { useEffect, useState, useRef } from 'react';
+import { Grid, CardContent, Typography, CardActionArea } from '@mui/material';
+import { StyledCard, StyledCardMedia } from "../components/StyledComponent"; // Assuming styled components are exported
 
 
-function Products() {
+interface Product {
+  id: number;
+  title: string;
+  price: number;
+  description: string;
+  category: string;
+  image: string;
+  rating: {
+    rate: number;
+    count: number;
+  };
+}
 
-  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
-
-  const StyledCard = styled(Card)({
-    height: '100%', // Ensures all cards are the same height
-    display: 'flex',
-    flexDirection: 'column'
-  });
-  
-  const StyledCardMedia = styled(CardMedia)({
-    paddingTop: '56.25%', // 16:9 aspect ratio
-    backgroundSize: 'cover', // Cover ensures the image covers the designated area without distortion
-  });
-  
-  interface Product {
-    id: number;
-    title: string;
-    price: number;
-    description: string;
-    category: string;
-    image: string;
-    rating: {
-      rate: number;
-      count: number;
-    };
-  }
-
+export default function ProductGrid() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+  const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   useEffect(() => {
     axios.get('https://fakestoreapi.com/products')
       .then(response => setProducts(response.data))
       .catch(error => console.error('Error fetching products', error));
-  }, []);
-  // Return your product table here
+
+    cardRefs.current = cardRefs.current.slice(0, products.length);
+  }, [products.length]);
+
+  useEffect(() => {
+    const handleKeyDown = (event: KeyboardEvent) => {
+      const currentIndex = focusedIndex !== null ? focusedIndex : -1;
+      let newIndex = currentIndex;
+
+      switch (event.key) {
+        case 'ArrowDown':
+          newIndex = currentIndex < cardRefs.current.length - 4 ? currentIndex + 4 : currentIndex;
+          break;
+        case 'ArrowUp':
+          newIndex = currentIndex >= 4 ? currentIndex - 4 : currentIndex;
+          break;
+        case 'ArrowLeft':
+          newIndex = currentIndex > 0 ? currentIndex - 1 : currentIndex;
+          break;
+        case 'ArrowRight':
+          newIndex = currentIndex < cardRefs.current.length - 1 ? currentIndex + 1 : currentIndex;
+          break;
+      }
+
+      if (newIndex !== currentIndex && cardRefs.current[newIndex]) {
+        cardRefs.current[newIndex]?.focus();
+        setFocusedIndex(newIndex);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [products, focusedIndex]);
 
   return (
     <Grid container spacing={4} style={{ padding: '20px' }}>
       {products.map((product, index) => (
         <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
           <StyledCard
-            ref={(el) => cardRefs.current[index] = el}
+            ref={(el) => {
+              if (el) cardRefs.current[index] = el;
+            }}
             tabIndex={0}
-            style={{ outline: 'none' }}
+            focused={index === focusedIndex}
           >
             <CardActionArea>
               <StyledCardMedia
@@ -81,5 +103,3 @@ function Products() {
     </Grid>
   );
 }
-
-export default Products;
