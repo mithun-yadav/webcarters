@@ -1,14 +1,14 @@
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect } from "react";
+import { useRouter } from "next/navigation";
 
 export const useAuth = () => {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<null | {}>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   useEffect(() => {
     const loadUser = async () => {
-      const storedUser = localStorage.getItem('user');
+      const storedUser = localStorage.getItem("user");
       if (storedUser) {
         setUser(JSON.parse(storedUser));
       }
@@ -19,20 +19,23 @@ export const useAuth = () => {
   }, []);
 
   const login = (username: string, password: string) => {
-    if (username === process.env.NEXT_PUBLIC_USERNAME && password === process.env.NEXT_PUBLIC_PASSWORD) {
+    if (
+      username === process.env.NEXT_PUBLIC_USERNAME &&
+      password === process.env.NEXT_PUBLIC_PASSWORD
+    ) {
       const userData = { username };
-      localStorage.setItem('user', JSON.stringify(userData));
+      localStorage.setItem("user", JSON.stringify(userData));
       setUser(userData);
-      router.push('/products');
+      router.push("/products");
     } else {
-      alert('Invalid credentials');
+      alert("Invalid credentials");
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('user');
+    localStorage.removeItem("user");
     setUser(null);
-    router.push('/login');
+    router.push("/login");
   };
 
   const isAuthenticated = () => !!user;
@@ -42,6 +45,6 @@ export const useAuth = () => {
     login,
     logout,
     isAuthenticated,
-    loading
+    loading,
   };
 };
