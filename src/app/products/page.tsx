@@ -1,11 +1,14 @@
 "use client"
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
-import { Grid, Card, CardMedia, CardContent, Typography, CardActionArea, Modal, Box, IconButton, styled, CssBaseline } from '@mui/material';
+import { Grid, Card, CardMedia, CardContent, Typography, CardActionArea, Modal, Box, IconButton, styled, CssBaseline, Tooltip, Rating } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { StyledCard, StyledCardMedia, ProductName, ProductDescription, ProductPrice } from '../components/StyledComponent';
 import { useAuth } from '../hooks/useAuth';
 import Header from '../components/Header';
+import { Rating as MuiRating } from '@mui/material';
+import StarBorderIcon from '@mui/icons-material/StarBorder';
+import CircularProgress from '@mui/material/CircularProgress';  
 
 interface Product {
   id: number;
@@ -41,11 +44,12 @@ const ProductGrid = () => {
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [open, setOpen] = useState(false);
   const productRefs = useRef<(HTMLDivElement | null)[]>([]);
-
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
-    return <div>Loading...</div>;  // Show loading text while checking auth state
+    return <Box sx={{ display: 'flex' }}>
+    <CircularProgress />
+  </Box>;  // Show loading text while checking auth state
   }
 
   const fetchProductData = () => {
@@ -128,7 +132,18 @@ const ProductGrid = () => {
                 />
                 <ProductName title={product.title}>{product.title}</ProductName>
                 <ProductDescription title={product.description}>{product.description}</ProductDescription>
-                <ProductPrice>${product.price.toFixed(2)}</ProductPrice>
+                <ProductPrice sx={{ display: 'inline-block', alignItems: 'center',width:"50%" }}>${product.price.toFixed(2)}</ProductPrice>
+                <Box sx={{ display: 'inline-block', alignItems: 'center', marginRight:"auto",width:"50%", textAlign:"right", paddingTop:"20px"}}>
+                  <Tooltip title={`Rated ${product.rating.rate} by ${product.rating.count} users`}>
+                    <Rating
+                      name="read-only"
+                      value={product.rating.rate}
+                      readOnly
+                      icon={<StarBorderIcon fontSize="inherit" />}
+                      emptyIcon={<StarBorderIcon fontSize="inherit" />}
+                    />
+                  </Tooltip>
+                </Box>
               </CardActionArea>
             </StyledCard>
           </Grid>
@@ -165,3 +180,4 @@ const ProductGrid = () => {
 };
 
 export default ProductGrid;
+export {Rating};
