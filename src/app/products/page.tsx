@@ -1,3 +1,7 @@
+////
+
+
+
 "use client"
 import axios from 'axios';
 import { useEffect, useState, useRef, SetStateAction } from 'react';
@@ -7,6 +11,11 @@ import { StyledCard, StyledCardMedia } from "../components/StyledComponent"; // 
 
 import { Select, MenuItem } from '@mui/material';
 import { FilterMenu } from '../components/FilterMenu';
+
+import { Modal, Box, IconButton } from '@mui/material';
+import CloseIcon from '@mui/icons-material/Close';
+
+import { Card, CardMedia } from '@mui/material';
 
 
 
@@ -23,12 +32,27 @@ interface Product {
   };
 }
 
+const style = {
+  position: 'absolute' as 'absolute',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+  width: 400,
+  bgcolor: 'background.paper',
+  border: '2px solid #000',
+  boxShadow: 24,
+  p: 4,
+}
+
 
 export default function ProductGrid() {
   const [products, setProducts] = useState<Product[]>([]);
   const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
   const cardRefs = useRef<(HTMLDivElement | null)[]>([]);
   const [categories, setCategories] = useState<string[]>([]);
+  const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
+  const [open, setOpen] = useState(false);
+  // const productRefs = useRef([]);
 
 
   const [categoryFilter, setCategoryFilter] = useState<string>('All');
@@ -40,6 +64,16 @@ export default function ProductGrid() {
     const categories = products.map(product => product.category); // Extract categories from each product
     const uniqueCategories = Array.from(new Set(categories)); // Convert array to set to remove duplicates, then back to array
     return uniqueCategories;
+  };
+
+
+  const handleOpen = (product: Product) => {
+    setSelectedProduct(product);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
 
@@ -70,7 +104,7 @@ export default function ProductGrid() {
     cardRefs.current = cardRefs.current.slice(0, products.length);
   }, [products.length]);
 
-  const handleFocus = (newIndex:number) => {
+  const handleFocus = (newIndex: number) => {
     cardRefs.current[newIndex]?.focus();
     setFocusedIndex(newIndex);
   };
@@ -92,6 +126,12 @@ export default function ProductGrid() {
         case 'ArrowRight':
           newIndex = currentIndex < products.length - 1 ? currentIndex + 1 : currentIndex;
           break;
+          case 'Enter':
+            case ' ':
+                // Logic to handle Enter or Space key press
+                handleOpen(product);
+                event.preventDefault(); // Prevent the default action to stop scrolling on Space press
+                break;
         default:
           return; // ignore other keys
       }
@@ -141,7 +181,9 @@ export default function ProductGrid() {
                 onClick={() => handleFocus(currentIndex)}
               // onKeyDown={(event) => handleKeyDown(event, index)}
               >
-                <CardActionArea>
+                <CardActionArea ref={cardRefs.current[currentIndex]}
+                  tabIndex={0}
+                  onClick={() => handleOpen(product)}>
                   <StyledCardMedia
                     image={product.image}
                     title={product.title}
@@ -168,6 +210,31 @@ export default function ProductGrid() {
             </Grid>
           ))}
         </Grid>
+
+        {selectedProduct && (
+          <Modal
+            open={open}
+            onClose={handleClose}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={style}>
+              <IconButton aria-label="close" onClick={handleClose} style={{ position: 'absolute', right: 8, top: 8 }}>
+                <CloseIcon />
+              </IconButton>
+              <StyledCardMedia image={selectedProduct.image} title={selectedProduct.title}/>
+              <Typography id="modal-modal-title" variant="h6" component="h2">
+                {selectedProduct.title}
+              </Typography>
+              <Typography id="modal-modal-description" sx={{ mt: 2 }}>
+                {selectedProduct.description}
+              </Typography>
+              <Typography variant="body1">
+                Price: ${selectedProduct.price}
+              </Typography>
+            </Box>
+          </Modal>
+        )}
       </div>
     </div>
   );

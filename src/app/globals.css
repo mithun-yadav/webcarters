@@ -3,3 +3,6 @@
 @tailwind utilities;
 
 
+.css-1sbp3cy-MuiCardMedia-root {
+    background-size: contain;
+}
