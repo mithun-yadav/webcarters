@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Grid, Card, CardMedia, CardContent, Typography, CardActionArea, Modal, Box, IconButton, styled } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { StyledCard, StyledCardMedia, ProductName, ProductDescription, ProductPrice } from '../components/StyledComponent';
+import { useAuth } from '../hooks/useAuth';
 
 interface Product {
   id: number;
@@ -34,19 +35,36 @@ const ModalStyle = styled(Box)({
 });
 
 const ProductGrid = () => {
+
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [open, setOpen] = useState(false);
   const productRefs = useRef<(HTMLDivElement | null)[]>([]);
 
-  useEffect(() => {
+  const { isAuthenticated, loading } = useAuth();
+
+  if (loading) {
+    return <div>Loading...</div>;  // Show loading text while checking auth state
+  }
+
+  const fetchProductData = () => {
     axios.get<Product[]>('https://fakestoreapi.com/products')
       .then(response => {
         setProducts(response.data);
         productRefs.current = new Array(response.data.length).fill(null).map((_, i) => productRefs.current[i] || null);
       })
       .catch(error => console.error('Error fetching products', error));
-  }, []);
+  }
+
+  if (!isAuthenticated()) {
+    // Optionally use router to handle redirection more gracefully
+    if (typeof window !== 'undefined') {
+      window.location.href = '/login';  // Redirect if not authenticated
+      return null;  // Return null to ensure nothing else is rendered until redirect completes
+    }
+  } else {
+    fetchProductData();
+  }
 
   const handleOpen = (product: Product) => {
     setSelectedProduct(product);
