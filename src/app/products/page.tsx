@@ -1,10 +1,11 @@
 "use client"
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import axios from 'axios';
-import { Grid, Card, CardMedia, CardContent, Typography, CardActionArea, Modal, Box, IconButton, styled } from '@mui/material';
+import { Grid, Card, CardMedia, CardContent, Typography, CardActionArea, Modal, Box, IconButton, styled, CssBaseline } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 import { StyledCard, StyledCardMedia, ProductName, ProductDescription, ProductPrice } from '../components/StyledComponent';
 import { useAuth } from '../hooks/useAuth';
+import Header from '../components/Header';
 
 interface Product {
   id: number;
@@ -108,6 +109,8 @@ const ProductGrid = () => {
 
   return (
     <div>
+        <Header />
+      <div className='container mx-auto'>
       <Grid container spacing={2}>
         {products.map((product, index) => (
           <Grid item key={product.id} xs={12} sm={6} md={4} lg={3}>
@@ -131,6 +134,7 @@ const ProductGrid = () => {
           </Grid>
         ))}
       </Grid>
+      </div>
       {selectedProduct && (
         <Modal
           open={open}
@@ -138,7 +142,7 @@ const ProductGrid = () => {
           aria-labelledby="product-modal-title"
           aria-describedby="product-modal-description"
         >
-          <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 'auto', maxWidth: '600px', bgcolor: 'background.paper', boxShadow: 24, p: 4, display: 'flex', flexDirection: 'row' }}>
+          <Box sx={{ position: 'absolute', top: '50%', left: '50%', transform: 'translate(-50%, -50%)', width: 'auto', maxWidth: '700px', bgcolor: 'background.paper', boxShadow: 24, p: 4, display: 'flex', flexDirection: 'row' }}>
             <IconButton aria-label="close" onClick={handleClose} sx={{ position: 'absolute', right: 8, top: 8 }}>
               <CloseIcon />
             </IconButton>

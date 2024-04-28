@@ -3,6 +3,8 @@ import React, { useState, useContext } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import Button from '@mui/material/Button';
 import { CssBaseline, Box, Paper, Typography, TextField } from '@mui/material';
+import Background from '../components/Background';
+
 
 const LoginPage = () => {
   const { login, isAuthenticated } = useAuth();
@@ -23,6 +25,8 @@ const LoginPage = () => {
 
   return (
     <>
+      <CssBaseline />
+      <Background />
       <Box display="flex" alignItems="center" justifyContent="center" minHeight="100vh">
         <Paper elevation={4} sx={{ padding: 4, maxWidth: 400, width: '100%', margin: 3 }}>
           <Typography variant="h5" component="h1" sx={{ textAlign: 'center', marginBottom: 3 }}>
