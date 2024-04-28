@@ -180,4 +180,3 @@ const ProductGrid = () => {
 };
 
 export default ProductGrid;
-export {Rating};
