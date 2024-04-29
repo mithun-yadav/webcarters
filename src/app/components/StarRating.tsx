@@ -16,7 +16,7 @@ const StarRating: React.FC<StarRatingProps> = ({ product }) => {
   } else if (rate >= 2 && rate < 3) {
     color = 'orangered';
   } else if (rate >= 3 && rate < 4) {
-    color = 'purple';
+    color = 'goldenrod';
   } else if (rate >= 4 && rate <= 5) {
     color = 'green';
   }
@@ -25,7 +25,7 @@ const StarRating: React.FC<StarRatingProps> = ({ product }) => {
     <>
       <Box sx={{ textAlign: "center", color: "#fff" }}>
         <Tooltip title={`Rated ${rate} by ${product.rating.count} users`}>
-          <div className={`bg-[${color}] rounded-[100vw] px-4 py-1 text-[15px]`}>
+          <div style={{backgroundColor:`${color}`}} className={`rounded-[100vw] px-4 py-1 text-[15px]`}>
             <span className="relative top-[1.5px]">{`${rate}`}</span>
             <span className="relative top-[-1px]"><StarIcon fontSize='small' /></span>
           </div>
