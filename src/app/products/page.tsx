@@ -37,7 +37,7 @@ const ProductGrid = () => {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
-    return <Box sx={{ display: 'flex' }}>
+    return <Box sx={{ display: 'flex', justifyContent:"center", alignItems:"center", height:"100vh"}}>
       <CircularProgress />
     </Box>;  // Show loading text while checking auth state
   }
