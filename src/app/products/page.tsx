@@ -146,7 +146,7 @@ const ProductGrid = () => {
             </IconButton>
             <CardMedia
               component="img"
-              sx={{ width: 250, height: 250, m: 2 }}
+              sx={{ width: 250, height: 250, m: 2, objectFit:"contain"}}
               image={selectedProduct.image}
               alt={selectedProduct.title}
             />
