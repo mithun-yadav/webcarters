@@ -3,6 +3,7 @@ import React from 'react';
 import Link from 'next/link';
 import { useAuth } from '../hooks/useAuth';
 import { AppBar, Toolbar, Hidden, IconButton, Typography, Button } from '@mui/material';
+import StoreOutlinedIcon from '@mui/icons-material/StoreOutlined';
 
 const Header = () => {
   const { isAuthenticated, logout } = useAuth();
@@ -18,7 +19,8 @@ const Header = () => {
               </IconButton>
             </Hidden>
             <Typography variant="h6" sx={{ flexGrow: 1 }}>
-              WebCarters
+              <StoreOutlinedIcon/>
+              <span className='px-[8px] relative top-[2px] text-[1.5rem]'>WebCarters</span>
             </Typography>
             {isAuthenticated() ? (
               <Button color="inherit" onClick={logout}>Logout</Button>
